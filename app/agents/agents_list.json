@@ -1,0 +1,18 @@
+[
+  {
+    "name": "EmployeeDeploymentQueryAgent",
+    "description": "Queries Employee Deployment Data from a structured database by converting natural language questions into SQL SELECT queries.",
+    "capabilities": [
+      "natural language to SQL conversion",
+      "structured data retrieval",
+      "employee deployment analytics",
+      "filtering, sorting, and aggregation (count, sum, avg, etc.)",
+      "read-only database querying (SELECT only)"
+    ],
+    "tools_available": [
+      "sql_query_generator"
+    ],
+    "input": "Natural Language Question",
+    "output": "SQL SELECT Query only (no INSERT, UPDATE, DELETE)"
+  }
+]

@@ -1,10 +1,83 @@
-# Python-generated files
+# Python
 __pycache__/
-*.py[oc]
+*.py[cod]
+*$py.class
+*.pyo
+*.pyd
+*.pyi
+.Python
+env/
+venv/
+ENV/
+.venv/
+.ENV/
+pip-log.txt
+pip-delete-this-directory.txt
+python-env/
 build/
 dist/
-wheels/
-*.egg-info
+*.egg-info/
+.eggs/
+htmlcov/
+.tox/
+.nox/
+.coverage
+.coverage.*
+.cache
+nosetests.xml
+coverage.xml
+*.cover
+*.py,cover
+.hypothesis/
+.pytest_cache/
+pytestdebug.log
 
-# Virtual environments
-.venv
+# FastAPI / ASGI / Uvicorn
+uvicorn.log
+*.log
+
+# Environment variables
+.env
+*.env
+env.local
+venv.local
+.local
+
+# IDEs and editors
+.vscode/
+.idea/
+*.sublime-workspace
+*.sublime-project
+*.code-workspace
+*.iml
+*.ipr
+*.iws
+
+# Chroma DB
+chroma_db/
+
+# Generated files
+*.pyc
+*.pyd
+*.pyo
+
+# Logs
+logs/
+*.log
+
+# Coverage reports
+.coverage
+coverage.xml
+htmlcov/
+
+# local files
+docs/
+files/
+*.lock
+output*.txt
+data/
+to_do.txt
+db/
+
+# claude
+.claude/
