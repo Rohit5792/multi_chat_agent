@@ -3,7 +3,7 @@ from fastapi import FastAPI, WebSocket, WebSocketDisconnect
 from fastapi.staticfiles import StaticFiles
 from fastapi.responses import FileResponse
 from langchain_core.messages import AIMessage, BaseMessage, HumanMessage
-from app.graph import graph
+from app.node_graph.graph import graph
 from app.logger import get_logger
 
 logger = get_logger(__name__)

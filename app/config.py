@@ -8,3 +8,6 @@ OPENAI_API_KEY = os.getenv("OPENAI_API_KEY")
 LLM_MODEL = os.getenv("LLM_MODEL")
 
 DB_URL = os.getenv("DB_URL")
+CHROMA_DIR = os.getenv("CHROMA_DIR", "./chroma_db")
+GOOGLE_API_KEY    = os.getenv("GOOGLE_API_KEY")
+GOOGLE_EMBED_MODEL = os.getenv("GOOGLE_EMBED_MODEL")

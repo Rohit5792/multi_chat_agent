@@ -3,7 +3,7 @@ from langchain_core.messages import SystemMessage, HumanMessage
 from pathlib import Path
 
 from app.state import AgentState
-from app.nodes.prompt import CLASSIFIER_PROMPT
+from app.node_graph.prompt import CLASSIFIER_PROMPT
 from app.config import LLM_MODEL, OPENAI_BASE_URL, OPENAI_API_KEY
 from app.logger import get_logger
 

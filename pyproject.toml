@@ -13,6 +13,9 @@ dependencies = [
     "uvicorn[standard]>=0.46.0",
     "pandas>=2.0.0",
     "openpyxl>=3.1.0",
+    "langchain-google-genai>=4.2.2",
+    "chromadb>=0.6.0",
+    "docling>=2.91.0",
 ]
 
 [tool.uv]
@@ -20,7 +23,8 @@ package = true
 
 [project.scripts]
 app = "app.main:main"
-ingest = "app.ingest:main"
+ingest_db = "app.data_ingest_scripts.ingest_db:main"
+ingest_pdf = "app.data_ingest_scripts.ingest_pdf:main"
 
 [build-system]
 requires = ["setuptools>=68", "wheel"]

@@ -1,7 +1,7 @@
 from langgraph.graph import StateGraph, END
 from app.state import AgentState
-from app.nodes.classifier import classifier_node
-from app.nodes.router import router_node
+from app.node_graph.classifier import classifier_node
+from app.node_graph.router import router_node
 
 state_graph = StateGraph(AgentState)
 state_graph.add_node("classifier", classifier_node)
