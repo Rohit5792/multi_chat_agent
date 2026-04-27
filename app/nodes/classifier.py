@@ -1,5 +1,6 @@
 from langchain_openai import ChatOpenAI
 from langchain_core.messages import SystemMessage, HumanMessage
+from pathlib import Path
 
 from app.state import AgentState
 from app.nodes.prompt import CLASSIFIER_PROMPT
@@ -8,7 +9,9 @@ from app.logger import get_logger
 
 logger = get_logger(__name__)
 
-KNOWN_AGENTS = {"EmployeeDeploymentQueryAgent"}
+_agents_path = (Path(__file__).parent.parent / "agents")
+
+KNOWN_AGENTS = {item.name for item in _agents_path.iterdir() if item.is_dir() and not item.name.startswith("__")}
 
 _llm = ChatOpenAI(
     model=LLM_MODEL,
