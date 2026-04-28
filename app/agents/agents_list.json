@@ -14,5 +14,17 @@
     ],
     "input": "Natural Language Question",
     "output": "SQL SELECT Query only (no INSERT, UPDATE, DELETE)"
+  },
+  {
+    "name": "AskAboutZSAgent",
+    "description": "Answers questions about ZS (the company) by searching through ZS policy documents stored in a vector database. Use this agent for any question that can be answered from ZS company policies, guidelines, or rules.",
+    "capabilities": [
+      "answering questions from ZS company policy documents",
+      "retrieving policy rules, guidelines, and procedures",
+      "clarifying company policies based on document context",
+      "resolving follow-up questions about previously discussed policies"
+    ],
+    "input": "Natural Language Question",
+    "output": "Plain text answer grounded strictly in the policy documents"
   }
 ]

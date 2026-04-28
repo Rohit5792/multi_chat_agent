@@ -29,17 +29,18 @@ _COLLECTION = "documents"
 # ---------------------------------------------------------------------------
 
 def _find_pdfs(data_dir: str = "data") -> list[str]:
+    print(f"[find_pdfs] Scanning '{data_dir}/' for PDF files...")
     files = glob.glob(os.path.join(data_dir, "*.pdf"))
     if not files:
         raise FileNotFoundError(f"No PDF files found in '{data_dir}/'")
-    logger.info("Found %d PDF file(s)", len(files))
+    print(f"[find_pdfs] Found {len(files)} file(s): {files}")
     return files
 
 
 def _build_chroma_client() -> chromadb.PersistentClient:
     chroma_path = Path(CHROMA_DIR or "./chroma_db")
     chroma_path.mkdir(parents=True, exist_ok=True)
-    logger.info("ChromaDB directory: %s", chroma_path.resolve())
+    print(f"[chroma] Using directory: {chroma_path.resolve()}")
     return chromadb.PersistentClient(path=str(chroma_path))
 
 
@@ -65,65 +66,122 @@ def _chunk_metadata(chunk) -> dict:
 # ---------------------------------------------------------------------------
 
 def main() -> None:
+    print("=" * 60)
+    print("ingest_pdf starting")
+    print("=" * 60)
+
+    print(f"[config] GOOGLE_EMBED_MODEL = {GOOGLE_EMBED_MODEL}")
+    print(f"[config] GOOGLE_API_KEY     = {'set' if GOOGLE_API_KEY else 'NOT SET'}")
+    print(f"[config] CHROMA_DIR         = {CHROMA_DIR}")
+
     pdf_files = _find_pdfs()
 
-    logger.info("Initialising embedding model '%s'...", GOOGLE_EMBED_MODEL)
-    embed = GoogleGenerativeAIEmbeddings(
-        model=GOOGLE_EMBED_MODEL,
-        google_api_key=GOOGLE_API_KEY,
-    )
+    print(f"\n[embed] Initialising GoogleGenerativeAIEmbeddings with model '{GOOGLE_EMBED_MODEL}'...")
+    try:
+        embed = GoogleGenerativeAIEmbeddings(
+            model=GOOGLE_EMBED_MODEL,
+            google_api_key=GOOGLE_API_KEY,
+        )
+        print("[embed] Embedding model initialised OK")
+    except Exception as e:
+        print(f"[embed] ERROR initialising embedding model: {e}")
+        raise
 
-    client     = _build_chroma_client()
-    collection = client.get_or_create_collection(
-        name=_COLLECTION,
-        metadata={"hnsw:space": "cosine"},
-    )
+    print("\n[chroma] Connecting to ChromaDB...")
+    try:
+        client     = _build_chroma_client()
+        collection = client.get_or_create_collection(
+            name=_COLLECTION,
+            metadata={"hnsw:space": "cosine"},
+        )
+        print(f"[chroma] Collection '{_COLLECTION}' ready. Current item count: {collection.count()}")
+    except Exception as e:
+        print(f"[chroma] ERROR connecting to ChromaDB: {e}")
+        raise
 
-    logger.info("Initialising Docling converter (downloads models on first run)...")
-    converter = DocumentConverter()
-    chunker   = HybridChunker()
+    print("\n[docling] Initialising DocumentConverter (downloads models on first run)...")
+    try:
+        converter = DocumentConverter()
+        chunker   = HybridChunker()
+        print("[docling] Converter and chunker ready")
+    except Exception as e:
+        print(f"[docling] ERROR initialising Docling: {e}")
+        raise
 
     total_chunks = 0
 
     for pdf_path in pdf_files:
         filename = Path(pdf_path).name
-        logger.info("Parsing: %s", filename)
+        print(f"\n{'─' * 50}")
+        print(f"[parse] Processing: {filename}")
 
-        result = converter.convert(pdf_path)
-        chunks = list(chunker.chunk(result.document))
+        print(f"[parse] Running Docling converter on {filename}...")
+        try:
+            result = converter.convert(pdf_path)
+            print(f"[parse] Conversion done for {filename}")
+        except Exception as e:
+            print(f"[parse] ERROR converting {filename}: {e}")
+            continue
+
+        print(f"[chunk] Chunking document...")
+        try:
+            chunks = list(chunker.chunk(result.document))
+            print(f"[chunk] {len(chunks)} raw chunk(s) produced")
+        except Exception as e:
+            print(f"[chunk] ERROR chunking {filename}: {e}")
+            continue
 
         if not chunks:
-            logger.warning("No chunks produced from %s — skipping.", filename)
+            print(f"[chunk] WARNING: No chunks produced from {filename} — skipping.")
             continue
-        logger.info("  %d chunk(s) extracted", len(chunks))
 
-        ids, documents, metadatas = [], [], []
+        ids, documents, embeddings, metadatas = [], [], [], []
 
         for i, chunk in enumerate(chunks):
             text = chunk.text.strip()
             if not text:
+                print(f"[chunk]   chunk {i} is empty — skipping")
                 continue
-            ids.append(f"{filename}::c{i}")
-            documents.append(text)
+
+            chunk_id = f"{filename}::c{i}"
             meta = {"source": filename, "chunk": i}
             meta.update(_chunk_metadata(chunk))
+            print(f"[chunk]   chunk {i}: {len(text)} chars | meta: {meta}")
+
+            print(f"[embed]   embedding chunk {i}...")
+            try:
+                vector = embed.embed_query(text)
+                print(f"[embed]   chunk {i} embedded OK (dim={len(vector)})")
+            except Exception as e:
+                print(f"[embed]   ERROR embedding chunk {i}: {e} — skipping chunk")
+                continue
+
+            ids.append(chunk_id)
+            documents.append(text)
+            embeddings.append(vector)
             metadatas.append(meta)
 
         if not documents:
-            logger.warning("All chunks were empty in %s — skipping.", filename)
+            print(f"[chunk] WARNING: All chunks were empty or failed to embed in {filename} — skipping.")
             continue
 
-        logger.info("  Generating embeddings for %d chunk(s)...", len(documents))
-        embeddings = embed.embed_documents(documents)
+        print(f"\n[chroma] Upserting {len(documents)} chunk(s) into collection '{_COLLECTION}'...")
+        try:
+            collection.upsert(
+                ids=ids,
+                documents=documents,
+                embeddings=embeddings,
+                metadatas=metadatas,
+            )
+            print(f"[chroma] Upsert successful for {filename}")
+        except Exception as e:
+            print(f"[chroma] ERROR upserting {filename}: {e}")
+            continue
 
-        collection.upsert(
-            ids=ids,
-            documents=documents,
-            embeddings=embeddings,
-            metadatas=metadatas,
-        )
-        logger.info("  Upserted %d chunk(s) from %s", len(documents), filename)
         total_chunks += len(documents)
 
-    logger.info("Ingest complete. Total chunks upserted: %d", total_chunks)
-    logger.info("Collection '%s' now contains %d item(s).", _COLLECTION, collection.count())
+    print(f"\n{'=' * 60}")
+    print(f"Ingest complete.")
+    print(f"  Total chunks upserted : {total_chunks}")
+    print(f"  Collection item count  : {collection.count()}")
+    print("=" * 60)

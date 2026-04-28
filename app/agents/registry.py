@@ -13,3 +13,15 @@ async def EmployeeDeploymentQueryAgent(question: str, history: str = "[]") -> st
     """
     from app.agents.EmployeeDeploymentQueryAgent.agent import run_agent
     return await run_agent(question, history)
+
+@mcp.tool()
+async def AskAboutZSAgent(question: str, history: str = "[]") -> str:
+    """
+    AskAboutZSAgent: an agent which answers questions about ZS. It receives Natural Language Questions and provides answers based on the knowledge it has about ZS. The agent should be able to understand the context of the question and provide accurate and relevant information about ZS.
+
+    Input: Natural Language Question
+
+    Output: Answer about ZS
+    """
+    from app.agents.AskAboutZSAgent.agent import run_agent
+    return await run_agent(question, history)

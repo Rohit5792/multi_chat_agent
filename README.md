@@ -76,35 +76,36 @@ LangGraph State Graph
 multi_agent_chat/
 ├── app/
 │   ├── agents/
-│   │   ├── agents_list.json                  # Agent registry (read by classifier)
-│   │   ├── registry.py                       # FastMCP tool definitions
+│   │   ├── agents_list.json                    # Agent registry (read by classifier)
+│   │   ├── registry.py                         # FastMCP tool definitions
 │   │   └── EmployeeDeploymentQueryAgent/
-│   │       ├── agent.py                      # run_agent() entry point
-│   │       ├── prompt.py                     # System prompt
-│   │       └── tools.py                      # get_schema, execute_sql, format_table
+│   │       ├── agent.py                        # run_agent() entry point
+│   │       ├── prompt.py                       # System prompt
+│   │       └── tools.py                        # get_schema, execute_sql, format_table
 │   ├── data_ingest_scripts/
-│   │   ├── ingest_db.py                      # Excel → SQLite ingest
-│   │   └── ingest_pdf.py                     # PDF → ChromaDB ingest
+│   │   ├── ingest_db.py                        # Excel → SQLite ingest
+│   │   └── ingest_pdf.py                       # PDF → ChromaDB ingest
 │   ├── node_graph/
-│   │   ├── classifier.py                     # Classifier LangGraph node
-│   │   ├── router.py                         # Router LangGraph node
-│   │   ├── graph.py                          # LangGraph compilation
-│   │   └── prompt.py                         # Classifier system prompt
-│   ├── config.py                             # Env var loading
-│   ├── logger.py                             # Rotating file + console logger
-│   ├── main.py                               # FastAPI app + WebSocket endpoint
-│   └── state.py                              # AgentState TypedDict
-├── data/                                     # Drop Excel / PDF files here
+│   │   ├── classifier.py                       # Classifier LangGraph node
+│   │   ├── router.py                           # Router LangGraph node
+│   │   ├── graph.py                            # LangGraph compilation
+│   │   └── prompt.py                           # Classifier system prompt
+│   ├── config.py                               # Env var loading
+│   ├── logger.py                               # Rotating file + console logger
+│   ├── main.py                                 # FastAPI app + WebSocket endpoint
+│   └── state.py                                # AgentState TypedDict
+├── data/                                       # Drop Excel / PDF files here
 ├── db/
-│   ├── sql/                                  # SQLite database (auto-created)
-│   └── chroma/                               # ChromaDB store (auto-created)
+│   ├── sql/                                    # SQLite database (auto-created)
+│   └── chroma/                                 # ChromaDB store (auto-created)
 ├── static/
-│   └── index.html                            # Chat UI
-├── logs/                                     # Rotating log files (auto-created)
+│   └── index.html                              # Chat UI
+├── logs/                                       # Rotating log files (auto-created)
 ├── docs/
-│   └── employee_snapshot_schema.html         # DB schema diagram
-├── .env                                      # Secret config (never commit)
-├── .env.example                              # Config template
+|   └── multi_agent_architecture_langgraph.svg  # Application Architecture diagram
+│   └── employee_snapshot_schema.html           # DB schema diagram
+├── .env                                        # Secret config (never commit)
+├── .env.example                                # Config template
 └── pyproject.toml
 ```
 
