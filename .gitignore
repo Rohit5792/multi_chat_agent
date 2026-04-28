@@ -71,11 +71,10 @@ coverage.xml
 htmlcov/
 
 # local files
-docs/
+docs/superpowers/
 files/
 *.lock
 output*.txt
-data/
 to_do.txt
 db/
 
