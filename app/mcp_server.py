@@ -30,11 +30,13 @@ from app.logger import get_logger
 
 logger = get_logger(__name__)
 API_KEY = os.environ.get("API_KEY", "test123")
-# After
-import importlib.resources
-_AGENTS_JSON= json.loads(
-    importlib.resources.files("app.agents").joinpath("agents_list.json").read_text()
-)
+from pathlib import Path
+import json
+
+BASE_DIR = Path(__file__).resolve().parent.parent
+AGENTS_FILE = BASE_DIR / "agents" / "agents_list.json"
+
+_agents = json.loads(AGENTS_FILE.read_text())
 
 mcp = FastMCP(
     "Multi-Agent MCP Server",
@@ -58,7 +60,7 @@ async def list_agents() -> list[dict]:
     Input:  none
     Output: list of agent metadata dicts from agents_list.json
     """
-    return json.loads(_AGENTS_JSON.read_text())
+    return json.loads(_agents.read_text())
 
 
 # ---------------------------------------------------------------------------

@@ -34,5 +34,8 @@ async def list_agents() -> list[dict]:
     Returns the list of all available agents with their names,
     descriptions, capabilities, and I/O formats.
     """
-    agents_path = Path(__file__).parent / "agents_list.json"
+    agents_path = Path(__file__).resolve().parent / "agents_list.json"
+
+    if not agents_path.exists():
+        return []
     return json.loads(agents_path.read_text())
