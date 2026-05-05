@@ -27,6 +27,9 @@ app = "app.main:main"
 ingest_db = "app.data_ingest_scripts.ingest_db:main"
 ingest_pdf = "app.data_ingest_scripts.ingest_pdf:main"
 
+[tool.setuptools.package-data]
+"app.agents" = ["agents_list.json"]
+
 [build-system]
 requires = ["setuptools>=68", "wheel"]
 build-backend = "setuptools.build_meta"

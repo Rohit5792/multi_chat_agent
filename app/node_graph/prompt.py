@@ -1,8 +1,10 @@
 import json
 from pathlib import Path
  
+# After
+import importlib.resources
 _agents = json.loads(
-    (Path(__file__).parent.parent / "agents" / "agents_list.json").read_text()
+    importlib.resources.files("app.agents").joinpath("agents_list.json").read_text()
 )
 
 CLASSIFIER_PROMPT = f"""You are a routing agent responsible for selecting the most appropriate downstream agent for a given user query.

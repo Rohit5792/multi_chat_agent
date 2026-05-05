@@ -30,8 +30,11 @@ from app.logger import get_logger
 
 logger = get_logger(__name__)
 API_KEY = os.environ.get("API_KEY", "test123")
-
-_AGENTS_JSON = Path(__file__).parent / "agents" / "agents_list.json"
+# After
+import importlib.resources
+_AGENTS_JSON= json.loads(
+    importlib.resources.files("app.agents").joinpath("agents_list.json").read_text()
+)
 
 mcp = FastMCP(
     "Multi-Agent MCP Server",
