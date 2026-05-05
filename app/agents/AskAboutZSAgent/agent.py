@@ -23,7 +23,7 @@ async def run_agent(question: str, history: str = "[]") -> str:
 
     chunks = retrieve(question, n=10)
     context = "\n\n".join(chunks)
-    print(context)
+    # print(context)
     logger.debug("Context built from %d chunk(s)", len(chunks))
 
     prior: list = []

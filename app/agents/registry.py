@@ -25,3 +25,14 @@ async def AskAboutZSAgent(question: str, history: str = "[]") -> str:
     """
     from app.agents.AskAboutZSAgent.agent import run_agent
     return await run_agent(question, history)
+
+@mcp.tool()
+async def list_agents() -> list[dict]:
+    from pathlib import Path
+    import json
+    """
+    Returns the list of all available agents with their names,
+    descriptions, capabilities, and I/O formats.
+    """
+    agents_path = Path(__file__).parent / "agents_list.json"
+    return json.loads(agents_path.read_text())
