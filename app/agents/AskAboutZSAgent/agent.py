@@ -10,7 +10,7 @@ from app.logger import get_logger
 
 logger = get_logger(__name__)
 
-_llm = ChatOpenAI(
+llm = ChatOpenAI(
     model=LLM_MODEL,
     openai_api_key=OPENAI_API_KEY,
     openai_api_base=OPENAI_BASE_URL,
