@@ -13,7 +13,7 @@ _agents_path = (Path(__file__).parent.parent / "agents")
 
 KNOWN_AGENTS = {item.name for item in _agents_path.iterdir() if item.is_dir() and not item.name.startswith("__")}
 
-_llm = ChatOpenAI(
+llm = ChatOpenAI(
     model=LLM_MODEL,
     openai_api_key=OPENAI_API_KEY,
     openai_api_base=OPENAI_BASE_URL,
@@ -24,7 +24,7 @@ _llm = ChatOpenAI(
 async def classifier_node(state: AgentState) -> dict:
     question = state["messages"][-1].content
     logger.info("Classifying question: %s", question)
-    response = await _llm.ainvoke([
+    response = await llm.ainvoke([
         SystemMessage(content=CLASSIFIER_PROMPT),
         HumanMessage(content=question),
     ])

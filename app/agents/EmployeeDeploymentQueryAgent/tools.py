@@ -4,10 +4,10 @@ from app.logger import get_logger
 
 logger = get_logger(__name__)
 
-_engine = create_engine(DB_URL)
+engine = create_engine(DB_URL)
 
 def get_schema() -> str:
-    inspector = inspect(_engine)
+    inspector = inspect(engine)
     parts = []
     for table_name in inspector.get_table_names():
         cols = ", ".join(
@@ -23,7 +23,7 @@ def get_schema() -> str:
 def execute_sql(sql: str) -> tuple[list[str], list[tuple]]:
     logger.debug("Executing SQL: %s", sql)
     try:
-        with _engine.connect() as conn:
+        with engine.connect() as conn:
             result = conn.execute(text(sql))
             columns = list(result.keys())
             rows = result.fetchall()
